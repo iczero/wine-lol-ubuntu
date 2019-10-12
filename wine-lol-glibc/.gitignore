@@ -1,0 +1,5 @@
+glibc
+glibc-*
+lib32-glibc-build
+dist
+*.tar.gz
