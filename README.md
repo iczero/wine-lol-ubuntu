@@ -18,5 +18,5 @@ Slight changes:
 wine-lol-glibc should be built and installed before attempting to build wine-lol,
 as wine-lol expects wine-lol-glibc to already exist in /opt/wine-lol. Dependencies
 are listed in the scripts themselves as comments. The resulting tarballs should
-only contain files under /opt/wine-lol.
+only contain files under /opt/wine-lol and a font configuration in /etc/fonts.
 

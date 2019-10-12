@@ -30,43 +30,45 @@ if [[ ! -f wine-${_pkgbasever}.tar.xz ]]; then
     pushd wine
     patch -p1 -i ../wine-lol-poc1-wine.patch
     patch -p1 -i ../wine-lol-patch-stub.patch
+    patch -p1 -i ../wine-lol-poc2-wine.patch
     popd
 fi
 
-# compile
-echo "compile wine32"
-rm -rf wine-32-build
-mkdir wine-32-build
+if [[ ! -d wine-32-build ]]; then
+    # compile
+    echo "compile wine32"
+    mkdir wine-32-build
 
-# point things to wine-lol-glibc
-_RPATH="-rpath=/opt/wine-lol/lib32"
-_LINKER="-dynamic-linker=/opt/wine-lol/lib32/ld-linux.so.2"
-# hackity hack hack
-# we need LDFLAGS to be after -lpthread so it finds the one we have
-# in wine-lol-glibc but configure doesn't do that when verifying the
-# existence of libraries
-# side effect: literally everything is linked to libpthread
-_LOAD_BEFORE="-lpthread"
-export LDFLAGS="${LDFLAGS:--Wl},$_LOAD_BEFORE,$_RPATH,$_LINKER"
+    # point things to wine-lol-glibc
+    _RPATH="-rpath=/opt/wine-lol/lib32"
+    _LINKER="-dynamic-linker=/opt/wine-lol/lib32/ld-linux.so.2"
+    # hackity hack hack
+    # we need LDFLAGS to be after -lpthread so it finds the one we have
+    # in wine-lol-glibc but configure doesn't do that when verifying the
+    # existence of libraries
+    # side effect: literally everything is linked to libpthread
+    _LOAD_BEFORE="-lpthread"
+    export LDFLAGS="${LDFLAGS:--Wl},$_LOAD_BEFORE,$_RPATH,$_LINKER"
 
-# 32-bit
-export CFLAGS="-m32 $CFLAGS"
+    # 32-bit
+    export CFLAGS="-m32 $CFLAGS"
 
-pushd wine-32-build
-../wine/configure \
-    --prefix=/opt/wine-lol \
-    --with-x \
-    --with-xattr \
-    --libdir=/opt/wine-lol/lib32
+    pushd wine-32-build
+    ../wine/configure \
+        --prefix=/opt/wine-lol \
+        --with-x \
+        --with-xattr \
+        --libdir=/opt/wine-lol/lib32
 
-make depend LDRPATH_INSTALL="-Wl,$_RPATH,$_LINKER"
-make -j4
-popd
+    make depend LDRPATH_INSTALL="-Wl,$_RPATH,$_LINKER"
+    make -j4
+    popd
+fi
 
 # packaging
 echo "creating archive"
 mkdir -p dist
-pkgdir=$PWD
+pkgdir="$basedir/dist"
 cd "$basedir/wine-32-build"
 make prefix="$pkgdir/opt/wine-lol" \
      libdir="$pkgdir/opt/wine-lol/lib32" \
