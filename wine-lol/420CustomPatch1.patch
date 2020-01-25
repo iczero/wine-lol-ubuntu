@@ -1,10 +1,10 @@
 diff --git a/dlls/ntdll/thread.c b/dlls/ntdll/thread.c
-index 2c8777e138..cc28c32756 100644
+index c5b2008e44..96ca266921 100644
 --- a/dlls/ntdll/thread.c
 +++ b/dlls/ntdll/thread.c
-@@ -239,6 +239,77 @@ BOOL read_process_memory_stats(int unix_pid, VM_COUNTERS *pvmi)
-     return ret;
+@@ -268,6 +268,77 @@ static void set_process_name( int argc, char *argv[] )
  }
+ 
  
 +#ifdef __i386__
 +#include <asm/ldt.h>
@@ -80,14 +80,14 @@ index 2c8777e138..cc28c32756 100644
  /***********************************************************************
   *           thread_init
   *
-@@ -354,6 +425,10 @@ void thread_init(void)
-     esync_init();
+@@ -370,6 +441,10 @@ TEB *thread_init(void)
+     __wine_user_shared_data();
+     fill_cpu_info();
  
-     NtCreateKeyedEvent( &keyed_event, GENERIC_READ | GENERIC_WRITE, NULL, 0 );
-+
 +#ifdef __i386__
-+    seccomp_init();
++   seccomp_init();
 +#endif
++
+     return teb;
  }
- 
  

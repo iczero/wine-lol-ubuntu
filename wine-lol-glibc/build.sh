@@ -28,6 +28,7 @@ configure_flags=(
     --host=i686-pc-linux-gnu
     --libdir=/opt/wine-lol/lib32
     --libexecdir=/opt/wine-lol/lib32
+    --enable-cet
 )
 version=2.30
 basedir=$PWD

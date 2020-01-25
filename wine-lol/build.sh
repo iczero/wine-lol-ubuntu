@@ -5,7 +5,7 @@
 # simply move it somewhere else (like settings.ini-backup) and run apt install -f
 set -e
 
-version=4.17
+version=4.20
 
 _pkgbasever=${version/rc/-rc}
 basedir=$PWD
@@ -24,13 +24,13 @@ if [[ ! -f wine-${_pkgbasever}.tar.xz ]]; then
     mv wine-$_pkgbasever wine
     # wine-staging
     pushd wine-staging-$_pkgbasever/patches
+    # disable user32-rawinput patchset (https://bugs.winehq.org/show_bug.cgi?id=47834)
     ./patchinstall.sh DESTDIR="$basedir/wine" --all
     popd
     # league patches
     pushd wine
-    patch -p1 -i ../wine-lol-poc1-wine.patch
-    patch -p1 -i ../wine-lol-patch-stub.patch
-    patch -p1 -i ../wine-lol-poc2-wine.patch
+    patch -p1 -i ../420CustomPatch1.patch
+    patch -p1 -i ../wine-lol-bug48138.patch
     popd
 fi
 
